@@ -1,4 +1,5 @@
 import attribute, nature
+import random
 
 class Monster:
     monster_count = 0
@@ -30,3 +31,11 @@ class Battle:
     def __speed_decision__(self):
         monster1, monster2 = self.monster1, self.monster2
         spd1, spd2 = monster1.__net_ability__("SP"), monster2.__net_ability__("SP")
+        if spd1 > spd2: print(f"{monster1.name} first.")
+        elif spd2 > spd1: print(f"{monster2.name} first.")
+        else: # SAME speed
+            while True:
+                token1, token2 = random.random(), random.random()
+                if token1 != token2: break
+            if token1 > token2: print(f"{monster1.name} first.")
+            else: print(f"{monster2.name} first.")
