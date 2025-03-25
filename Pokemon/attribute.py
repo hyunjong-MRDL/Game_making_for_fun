@@ -1,7 +1,5 @@
 # 포켓몬 속성/타입에 대한 코드 (이건 나중에)
 # 타입간 상성 적용, 데미지 계산 코드
 
-attributes = ["Fire",
-              "Water",
-              "Leaf",
-              ""]
+attribute_list = ["Normal", "Fire", "Water", "Leaf", "Electric", "Ice", "Fight", "Poison", "Ground",
+              "Fly", "Psychic", "Bug", "Rock", "Ghost", "Drake", "Dark", "Steel", "Fariy"]
