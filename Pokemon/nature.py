@@ -10,11 +10,11 @@ nature_list = ["Hardy", "Lonely", "Adamant", "Naughty", "Brave",
 
 def __nature_effect_list__(nature_of_monster):
     nature_index = nature_list.index(nature_of_monster)
-    row, col = nature_index//5, nature_index%5
-    if row == col:
+    boosted_idx, nerfed_idx = nature_index//5, nature_index%5
+    if boosted_idx == nerfed_idx:
         return [1.0] * len(nature_dependent_stats)
     else:
         nature_effects = [1.0] * len(nature_dependent_stats)
-        nature_effects[row] = 1.1  # boosted stat
-        nature_effects[col] = 0.9  # reduced stat
+        nature_effects[boosted_idx] = 1.1  # boosted stat
+        nature_effects[nerfed_idx] = 0.9  # reduced stat
         return nature_effects

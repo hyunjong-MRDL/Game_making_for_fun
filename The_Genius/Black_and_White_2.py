@@ -11,7 +11,7 @@ while True:
 
     # 게임 룰 설명
     if game_start == "H":
-        print("게임 룰:")
+        print("게임 룰: 룰은 이렇습니다....")
         continue
 
     # 사용자 입력에 따른 게임 종료

@@ -1,112 +1,72 @@
 import numpy as np
 
-type_list = ["Normal", "Fire", "Water", "Electric", "Leaf", "Ice", "Fight", "Poison", "Ground",
-            "Fly", "Psychic", "Bug", "Rock", "Ghost", "Dragon", "Dark", "Steel", "Fariy"]
+effectiveness = {
+    "Normal": {"weak": ["Rock", "Steel"], "zero": ["Ghost"]},
+    "Fire": {"strong": ["Leaf", "Ice", "Bug", "Steel"], "weak": ["Fire", "Water", "Rock", "Dragon"]},
+    "Water": {"strong": ["Fire", "Ground", "Rock"], "weak": ["Water", "Leaf", "Dragon"]},
+    "Electric": {"strong": ["Water", "Fly"], "weak": ["Electric", "Leaf", "Dragon"], "zero": ["Ground"]},
+    "Leaf": {"strong": ["Water", "Ground", "Rock"], "weak": ["Fire", "Leaf", "Poison", "Fly", "Bug", "Dragon", "Steel"]},
+    "Ice": {"strong": ["Leaf", "Ground", "Fly", "Dragon"], "weak": ["Fire", "Water", "Ice", "Steel"]},
+    "Fight": {"strong": ["Normal", "Ice", "Rock", "Dark", "Steel"], "weak": ["Poison", "Fly", "Psychic", "Bug", "Fairy"], "zero": ["Ghost"]},
+    "Poison": {"strong": ["Leaf", "Fairy"], "weak": ["Poison", "Ground", "Rock", "Ghost"], "zero": ["Steel"]},
+    "Ground": {"strong": ["Fire", "Electric", "Poison", "Rock", "Steel"], "weak": ["Leaf", "Bug"], "zero": ["Fly"]},
+    "Fly": {"strong": ["Leaf", "Fight", "Bug"], "weak": ["Electric", "Rock", "Steel"]},
+    "Psychic": {"strong": ["Fight", "Poison"], "weak": ["Psychic", "Steel"], "zero": ["Dark"]},
+    "Bug": {"strong": ["Leaf", "Psychic", "Dark"], "weak": ["Fire", "Fight", "Poison", "Fly", "Ghost", "Steel", "Fairy"]},
+    "Rock": {"strong": ["Fire", "Ice", "Fly", "Bug"], "weak": ["Fight", "Ground", "Steel"]},
+    "Ghost": {"strong": ["Psychic", "Ghost"], "weak": ["Dark"], "zero": ["Normal"]},
+    "Dragon": {"strong": ["Dragon"], "weak": ["Steel"], "zero": ["Fairy"]},
+    "Dark": {"strong": ["Psychic", "Ghost"], "weak": ["Fight", "Dark", "Fairy"]},
+    "Steel": {"strong": ["Ice", "Rock", "Fairy"], "weak": ["Fire", "Water", "Electric", "Steel"]},
+    "Fairy": {"strong": ["Fight", "Dragon", "Dark"], "weak": ["Fire", "Poison", "Steel"]}
+}
 
-raw_type_matrix = [[1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0],
-                   [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0],
-                   [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0],
-                   [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0],
-                   [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0],
-                   [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0],
-                   [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0],
-                   [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0],
-                   [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0],
-                   [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0],
-                   [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0],
-                   [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0],
-                   [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0],
-                   [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0],
-                   [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0],
-                   [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0],
-                   [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0],
-                   [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]]
+# raw_effective_matrix = np.ones((len(effectiveness), len(effectiveness)))
 
-def update_type_matrix(type_effective_matrix):
-    for i, row in enumerate(type_effective_matrix):
-        attack_type = type_list[i]
-        for j in range(len(row)):
-            defend_type = type_list[j]
+# def update_type_matrix(type_effective_matrix):
+#     for i, attack_type in enumerate(effectiveness):
+#         for j, defend_type in enumerate(effectiveness):
+#             if attack_type in effectiveness:
+#                 eff = effectiveness[attack_type]
+#                 if "strong" in eff and defend_type in eff["strong"]:
+#                     type_effective_matrix[i][j] = 1.5
+#                 elif "weak" in eff and defend_type in eff["weak"]:
+#                     type_effective_matrix[i][j] = 0.5
+#                 elif "zero" in eff and defend_type in eff["zero"]:
+#                     type_effective_matrix[i][j] = 0.0
+#     return type_effective_matrix
 
-            # 0
-            if attack_type == "Normal":
-                if (defend_type == "Rock") or (defend_type == "Steel"): type_effective_matrix[i][j] = 0.5
-                elif defend_type == "Ghost": type_effective_matrix[i][j] = 0.0
-            # 1
-            if attack_type == "Fire":
-                if defend_type in ("Leaf", "Ice", "Bug", "Steel"): type_effective_matrix[i][j] = 1.5
-                elif defend_type in ("Fire", "Water", "Rock", "Dragon"): type_effective_matrix[i][j] = 0.5
-            # 2
-            if attack_type == "Water":
-                if defend_type in ("Fire", "Ground", "Rock"): type_effective_matrix[i][j] = 1.5
-                elif defend_type in ("Water", "Leaf", "Dragon"): type_effective_matrix[i][j] = 0.5
-            # 3
-            if attack_type == "Electric":
-                if defend_type in ("Water", "Fly"): type_effective_matrix[i][j] = 1.5
-                elif defend_type in ("Electric", "Leaf", "Dragon"): type_effective_matrix[i][j] = 0.5
-                elif defend_type == "Ground": type_effective_matrix[i][j] = 0.0
-            # 4
-            if attack_type == "Leaf":
-                if defend_type in ("Water", "Ground", "Rock"): type_effective_matrix[i][j] = 1.5
-                elif defend_type in ("Fire", "Leaf", "Poison", "Fly", "Bug", "Dragon", "Steel"): type_effective_matrix[i][j] = 0.5
-            # 5
-            if attack_type == "Ice":
-                if defend_type in ("Leaf", "Ground", "Fly", "Dragon"): type_effective_matrix[i][j] = 1.5
-                elif defend_type in ("Fire", "Water", "Ice", "Steel"): type_effective_matrix[i][j] = 0.5
-            # 6
-            if attack_type == "Fight":
-                if defend_type in ("Normal", "Ice", "Rock", "Dark", "Steel"): type_effective_matrix[i][j] = 1.5
-                elif defend_type in ("Poison", "Fly", "Psychic", "Bug", "Fairy"): type_effective_matrix[i][j] = 0.5
-                elif defend_type == "Ghost": type_effective_matrix[i][j] = 0.0
-            # 7
-            if attack_type == "Poison":
-                if defend_type in ("Leaf", "Fairy"): type_effective_matrix[i][j] = 1.5
-                elif defend_type in ("Poison", "Ground", "Rock", "Ghost"): type_effective_matrix[i][j] = 0.5
-                elif defend_type == "Steel": type_effective_matrix[i][j] = 0.0
-            # 8
-            if attack_type == "Ground":
-                if defend_type in ("Fire", "Electric", "Poison", "Rock", "Steel"): type_effective_matrix[i][j] = 1.5
-                elif defend_type in ("Leaf", "Bug"): type_effective_matrix[i][j] = 0.5
-                elif defend_type == "Fly": type_effective_matrix[i][j] = 0.0
-            # 9
-            if attack_type == "Fly":
-                if defend_type in ("Leaf", "Fight", "Bug"): type_effective_matrix[i][j] = 1.5
-                elif defend_type in ("Electric", "Rock", "Steel"): type_effective_matrix[i][j] = 0.5
-            # 10
-            if attack_type == "Psychic":
-                if defend_type in ("Fight", "Poison"): type_effective_matrix[i][j] = 1.5
-                elif defend_type in ("Psychic", "Steel"): type_effective_matrix[i][j] = 0.5
-                elif defend_type == "Dark": type_effective_matrix[i][j] = 0.0
-            # 11
-            if attack_type == "Bug":
-                if defend_type in ("Leaf", "Psychic", "Dark"): type_effective_matrix[i][j] = 1.5
-                elif defend_type in ("Fire", "Fight", "Poison", "Fly", "Ghost", "Steel", "Fairy"): type_effective_matrix[i][j] = 0.5
-            # 12
-            if attack_type == "Rock":
-                if defend_type in ("Fire", "Ice", "Fly", "Bug"): type_effective_matrix[i][j] = 1.5
-                elif defend_type in ("Fight", "Ground", "Steel"): type_effective_matrix[i][j] = 0.5
-            # 13
-            if attack_type == "Ghost":
-                if defend_type in ("Psychic", "Ghost"): type_effective_matrix[i][j] = 1.5
-                elif defend_type == "Dark": type_effective_matrix[i][j] = 0.5
-                elif defend_type == "Normal": type_effective_matrix[i][j] = 0.0
-            # 14
-            if attack_type == "Dragon":
-                if defend_type == "Dragon": type_effective_matrix[i][j] = 1.5
-                elif defend_type == "Steel": type_effective_matrix[i][j] = 0.5
-                elif defend_type == "Fairy": type_effective_matrix[i][j] = 0.0
-            # 15
-            if attack_type == "Dark":
-                if defend_type in ("Psychic", "Ghost"): type_effective_matrix[i][j] = 1.5
-                elif defend_type in ("Fight", "Dark", "Fairy"): type_effective_matrix[i][j] = 0.5
-            # 16
-            if attack_type == "Steel":
-                if defend_type in ("Ice", "Rock", "Fairy"): type_effective_matrix[i][j] = 1.5
-                elif defend_type in ("Fire", "Water", "Electric", "Steel"): type_effective_matrix[i][j] = 0.5
-            # 17
-            if attack_type == "Fairy":
-                if defend_type in ("Fight", "Dragon", "Dark"): type_effective_matrix[i][j] = 1.5
-                elif defend_type in ("Fire", "Poison", "Steel"): type_effective_matrix[i][j] = 0.5
-    return type_effective_matrix
+# updated_effective_matrix = update_type_matrix(raw_effective_matrix)
 
-updated_type_matrix = update_type_matrix(raw_type_matrix)
+effective_matrix = [[1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 0.5, 0.0, 1.0, 1.0, 0.5, 1.0],
+                    [1.0, 0.5, 0.5, 1.0, 1.5, 1.5, 1.0, 1.0, 1.0, 1.0, 1.0, 1.5, 0.5, 1.0, 0.5, 1.0, 1.5, 1.0],
+                    [1.0, 1.5, 0.5, 1.0, 0.5, 1.0, 1.0, 1.0, 1.5, 1.0, 1.0, 1.0, 1.5, 1.0, 0.5, 1.0, 1.0, 1.0],
+                    [1.0, 1.0, 1.5, 0.5, 0.5, 1.0, 1.0, 1.0, 0.0, 1.5, 1.0, 1.0, 1.0, 1.0, 0.5, 1.0, 1.0, 1.0],
+                    [1.0, 0.5, 1.5, 1.0, 0.5, 1.0, 1.0, 0.5, 1.5, 0.5, 1.0, 0.5, 1.5, 1.0, 0.5, 1.0, 0.5, 1.0],
+                    [1.0, 0.5, 0.5, 1.0, 1.5, 0.5, 1.0, 1.0, 1.5, 1.5, 1.0, 1.0, 1.0, 1.0, 1.5, 1.0, 0.5, 1.0],
+                    [1.5, 1.0, 1.0, 1.0, 1.0, 1.5, 1.0, 0.5, 1.0, 0.5, 0.5, 0.5, 1.5, 0.0, 1.0, 1.5, 1.5, 0.5],
+                    [1.0, 1.0, 1.0, 1.0, 1.5, 1.0, 1.0, 0.5, 0.5, 1.0, 1.0, 1.0, 0.5, 0.5, 1.0, 1.0, 0.0, 1.5],
+                    [1.0, 1.5, 1.0, 1.5, 0.5, 1.0, 1.0, 1.5, 1.0, 0.0, 1.0, 0.5, 1.5, 1.0, 1.0, 1.0, 1.5, 1.0],
+                    [1.0, 1.0, 1.0, 0.5, 1.5, 1.0, 1.5, 1.0, 1.0, 1.0, 1.0, 1.5, 0.5, 1.0, 1.0, 1.0, 0.5, 1.0],
+                    [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.5, 1.5, 1.0, 1.0, 0.5, 1.0, 1.0, 1.0, 1.0, 0.0, 0.5, 1.0],
+                    [1.0, 0.5, 1.0, 1.0, 1.5, 1.0, 0.5, 0.5, 1.0, 0.5, 1.5, 1.0, 1.0, 0.5, 1.0, 1.5, 0.5, 0.5],
+                    [1.0, 1.5, 1.0, 1.0, 1.0, 1.5, 0.5, 1.0, 0.5, 1.5, 1.0, 1.5, 1.0, 1.0, 1.0, 1.0, 0.5, 1.0],
+                    [0.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.5, 1.0, 1.0, 1.5, 1.0, 0.5, 1.0, 1.0],
+                    [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.5, 1.0, 0.5, 0.0],
+                    [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 0.5, 1.0, 1.0, 1.0, 1.5, 1.0, 1.0, 1.5, 1.0, 0.5, 1.0, 0.5],
+                    [1.0, 0.5, 0.5, 0.5, 1.0, 1.5, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.5, 1.0, 1.0, 1.0, 0.5, 1.5],
+                    [1.0, 0.5, 1.0, 1.0, 1.0, 1.0, 1.5, 0.5, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.5, 1.5, 0.5, 1.0]]
+
+def calculate_damage(attacker, defender, skill):
+    atk_type = skill.skill_type
+    def_type = defender.attr
+    attack_stat = attacker.__net_ability__(1)
+    defense_stat = defender.__net_ability__(2)
+
+    atk_idx = effectiveness.index(atk_type)
+    def_idx = effectiveness.index(def_type)
+    type_multiplier = effective_matrix[atk_idx][def_idx]
+
+    damage = type_multiplier * (((2 * attacker.level / 5 + 2) * skill.power * attack_stat / defense_stat) / 50 + 2)
+
+    return int(damage)
