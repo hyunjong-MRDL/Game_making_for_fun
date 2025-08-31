@@ -1,4 +1,4 @@
-import attribute, nature
+import ATTRIBUTES.attribute as attribute, MONSTERS.nature as nature
 import random
 
 class Monster:
