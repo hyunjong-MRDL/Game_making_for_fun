@@ -1,4 +1,4 @@
-import encyclopedia, monsters, nature
+from . import encyclopedia, monsters, nature
 import random
 
 def dict_key_sample():
