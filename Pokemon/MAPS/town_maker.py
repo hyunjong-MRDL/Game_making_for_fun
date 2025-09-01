@@ -1,3 +1,4 @@
+import os
 import pygame
 import numpy as np
 
@@ -81,7 +82,9 @@ while running:
                 object_to_place = 5
                 print("현재 배치할 객체: 가로수 (5)")
             elif event.key == pygame.K_s:
-                np.save('map_data.npy', game_map)
+                curr_dir = os.path.dirname(os.path.abspath(__file__))
+                map_file_path = os.path.join(curr_dir, "map_data.npy")
+                np.save(map_file_path, game_map)
                 print("맵이 'map_data.npy' 파일로 저장되었습니다.")
                 
     screen.fill((255, 255, 255))

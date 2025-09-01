@@ -1,4 +1,4 @@
-import MONSTERS.encyclopedia as encyclopedia, MONSTERS.monsters as monsters, MONSTERS.nature as nature
+import encyclopedia, monsters, nature
 import random
 
 def dict_key_sample():
