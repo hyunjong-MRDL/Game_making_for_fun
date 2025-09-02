@@ -21,51 +21,50 @@ effectiveness = {
     "Fairy": {"strong": ["Fight", "Dragon", "Dark"], "weak": ["Fire", "Poison", "Steel"]}
 }
 
-# raw_effective_matrix = np.ones((len(effectiveness), len(effectiveness)))
+def create_effective_matrix():
+    """
+    Dynamic production of type effective matrix
+    """
+    types = list(effectiveness.keys())
+    num_types = len(types)
 
-# def update_type_matrix(type_effective_matrix):
-#     for i, attack_type in enumerate(effectiveness):
-#         for j, defend_type in enumerate(effectiveness):
-#             if attack_type in effectiveness:
-#                 eff = effectiveness[attack_type]
-#                 if "strong" in eff and defend_type in eff["strong"]:
-#                     type_effective_matrix[i][j] = 1.5
-#                 elif "weak" in eff and defend_type in eff["weak"]:
-#                     type_effective_matrix[i][j] = 0.5
-#                 elif "zero" in eff and defend_type in eff["zero"]:
-#                     type_effective_matrix[i][j] = 0.0
-#     return type_effective_matrix
+    effective_matrix = np.ones((num_types, num_types))
+    for i, attack_type in enumerate(types):
+        eff_info = effectiveness[attack_type]
+        
+        if "strong" in eff_info:
+            for defend_type in eff_info["strong"]:
+                j = types.index(defend_type)
+                effective_matrix[i, j] = 1.5
+        if "weak" in eff_info:
+            for defend_type in eff_info["weak"]:
+                j = types.index(defend_type)
+                effective_matrix[i, j] = 0.5
+        if "zero" in eff_info:
+            for defend_type in eff_info["zero"]:
+                j = types.index(defend_type)
+                effective_matrix[i, j] = 0.0
+                
+    return effective_matrix
 
-# updated_effective_matrix = update_type_matrix(raw_effective_matrix)
-
-effective_matrix = [[1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 0.5, 0.0, 1.0, 1.0, 0.5, 1.0],
-                    [1.0, 0.5, 0.5, 1.0, 1.5, 1.5, 1.0, 1.0, 1.0, 1.0, 1.0, 1.5, 0.5, 1.0, 0.5, 1.0, 1.5, 1.0],
-                    [1.0, 1.5, 0.5, 1.0, 0.5, 1.0, 1.0, 1.0, 1.5, 1.0, 1.0, 1.0, 1.5, 1.0, 0.5, 1.0, 1.0, 1.0],
-                    [1.0, 1.0, 1.5, 0.5, 0.5, 1.0, 1.0, 1.0, 0.0, 1.5, 1.0, 1.0, 1.0, 1.0, 0.5, 1.0, 1.0, 1.0],
-                    [1.0, 0.5, 1.5, 1.0, 0.5, 1.0, 1.0, 0.5, 1.5, 0.5, 1.0, 0.5, 1.5, 1.0, 0.5, 1.0, 0.5, 1.0],
-                    [1.0, 0.5, 0.5, 1.0, 1.5, 0.5, 1.0, 1.0, 1.5, 1.5, 1.0, 1.0, 1.0, 1.0, 1.5, 1.0, 0.5, 1.0],
-                    [1.5, 1.0, 1.0, 1.0, 1.0, 1.5, 1.0, 0.5, 1.0, 0.5, 0.5, 0.5, 1.5, 0.0, 1.0, 1.5, 1.5, 0.5],
-                    [1.0, 1.0, 1.0, 1.0, 1.5, 1.0, 1.0, 0.5, 0.5, 1.0, 1.0, 1.0, 0.5, 0.5, 1.0, 1.0, 0.0, 1.5],
-                    [1.0, 1.5, 1.0, 1.5, 0.5, 1.0, 1.0, 1.5, 1.0, 0.0, 1.0, 0.5, 1.5, 1.0, 1.0, 1.0, 1.5, 1.0],
-                    [1.0, 1.0, 1.0, 0.5, 1.5, 1.0, 1.5, 1.0, 1.0, 1.0, 1.0, 1.5, 0.5, 1.0, 1.0, 1.0, 0.5, 1.0],
-                    [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.5, 1.5, 1.0, 1.0, 0.5, 1.0, 1.0, 1.0, 1.0, 0.0, 0.5, 1.0],
-                    [1.0, 0.5, 1.0, 1.0, 1.5, 1.0, 0.5, 0.5, 1.0, 0.5, 1.5, 1.0, 1.0, 0.5, 1.0, 1.5, 0.5, 0.5],
-                    [1.0, 1.5, 1.0, 1.0, 1.0, 1.5, 0.5, 1.0, 0.5, 1.5, 1.0, 1.5, 1.0, 1.0, 1.0, 1.0, 0.5, 1.0],
-                    [0.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.5, 1.0, 1.0, 1.5, 1.0, 0.5, 1.0, 1.0],
-                    [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.5, 1.0, 0.5, 0.0],
-                    [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 0.5, 1.0, 1.0, 1.0, 1.5, 1.0, 1.0, 1.5, 1.0, 0.5, 1.0, 0.5],
-                    [1.0, 0.5, 0.5, 0.5, 1.0, 1.5, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.5, 1.0, 1.0, 1.0, 0.5, 1.5],
-                    [1.0, 0.5, 1.0, 1.0, 1.0, 1.0, 1.5, 0.5, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.5, 1.5, 0.5, 1.0]]
+effective_matrix = create_effective_matrix()
 
 def calculate_damage(attacker, defender, skill):
+    types = list(effectiveness.keys())
     atk_type = skill.skill_type
     def_type = defender.attr
+
+    try:
+        atk_idx = types.index(atk_type)
+        def_idx = types.index(def_type)
+    except ValueError:
+        print(f"Error: Unknown type '{atk_type}' or '{def_type}'.")
+        return 0
+
     attack_stat = attacker.__net_ability__(1)
     defense_stat = defender.__net_ability__(2)
 
-    atk_idx = effectiveness.index(atk_type)
-    def_idx = effectiveness.index(def_type)
-    type_multiplier = effective_matrix[atk_idx][def_idx]
+    type_multiplier = effective_matrix[atk_idx, def_idx]
 
     damage = type_multiplier * (((2 * attacker.level / 5 + 2) * skill.power * attack_stat / defense_stat) / 50 + 2)
 
