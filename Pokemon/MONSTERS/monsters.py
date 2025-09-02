@@ -3,7 +3,7 @@ import random
 
 class Monster:
     monster_count = 0
-    def __init__(self, name, attr, level, nature, BS, IV, EV, level_type, EXP):
+    def __init__(self, name, attr, level, nature, BS, IV, EV, level_type, EXP, base_exp):
         # attr: Attribute (속성, 타입)
         # nature: 성격
         # BS: Base stats (종족값) -> LIST: [HP, PA, PD, SA, SD, SP])
@@ -12,7 +12,7 @@ class Monster:
         self.name = name
         self.attr, self.level, self.nature = attr, level, nature
         self.BS, self.IV, self.EV = BS, IV, EV
-        self.level_type, self.EXP = level_type, EXP
+        self.level_type, self.EXP, self.base_exp = level_type, EXP, base_exp
         Monster.monster_count += 1
     
     # 경험치 계산 (현재 경험치 + 전투에서 획득한 경험치 -> 임계값 초과하면 레벨업)
